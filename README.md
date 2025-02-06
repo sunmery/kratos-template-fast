@@ -1,6 +1,9 @@
-## Kratos-single-template
+## Kratos-fest-template
 
 ## 说明
+本项目只适合对 kratos 有使用经验的朋友有帮助,它减少了你删除示例文件的重复劳动并集成了热门的微服务相关的组件
+
+你需要编写api, biz, data, server和 service 的代码, 也需要把方法注入 ProviderSet 中
 
 该项目默认集成了以下的组件
 
