@@ -23,17 +23,19 @@ import (
 var (
 	Name = "organization-application-version"
 	// Version 通过环境变量来替换
-	Version      string
-	flagconf     string
-	configCenter string
-	configPath   string
-	id, _        = os.Hostname()
+	Version           string
+	flagconf          string
+	configPath        string
+	configCenter      string
+	configCenterToken string
+	id, _             = os.Hostname()
 )
 
 func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 	flag.StringVar(&configCenter, "config_center", "localhost:8500", "config center url, eg: -config_center 127.0.0.1:8500")
-	flag.StringVar(&configPath, "config_path", "ecommerce/user/config.yaml", "config center path, eg: -config_center ecommerce/user/account/config.yaml")
+	flag.StringVar(&configPath, "config_path", "organization/application/config.yaml", "config center path, eg: -config_center organization/application/config.yaml")
+	flag.StringVar(&configCenterToken, "config_center_token", "token", "config center acl token, eg: -config_center_token token")
 	flag.StringVar(&Version, "version", "v0.0.1", "version, eg: -version v0.0.1")
 }
 
@@ -67,8 +69,9 @@ func main() {
 	)
 
 	consulConfig := pkg.ConfigCenter{
-		Addr: configCenter,
-		Path: configPath,
+		Addr:  configCenter,
+		Path:  configPath,
+		Token: configCenterToken,
 	}
 	cs := pkg.InitConsul(consulConfig)
 

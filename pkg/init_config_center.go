@@ -15,7 +15,8 @@ type ConfigCenter struct {
 	// 配置中心地址
 	Addr string
 	// 微服务对应的配置文件路径
-	Path string
+	Path  string
+	Token string
 }
 
 func InitConsul(config ConfigCenter) config.Source {
@@ -28,6 +29,9 @@ func InitConsul(config ConfigCenter) config.Source {
 	if envConfigPath := os.Getenv("config_path"); envConfigPath != "" {
 		config.Path = envConfigPath
 	}
+	if envConfigCenterToken := os.Getenv("config_center_token"); envConfigCenterToken != "" {
+		config.Path = envConfigCenterToken
+	}
 
 	// debug
 	fmt.Printf("configPath:%v\n", config.Path)
@@ -37,6 +41,7 @@ func InitConsul(config ConfigCenter) config.Source {
 		Address:  config.Addr,
 		Scheme:   "http",
 		WaitTime: time.Second * 15,
+		Token:    config.Token,
 	})
 	if err != nil {
 		log.Fatal(fmt.Errorf("create consul client failed:%w", err))
