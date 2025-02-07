@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	jwtV5 "github.com/golang-jwt/jwt/v5"
+	"github.com/sunmery/kratos-template/internal/conf"
 )
 
 // NewWhiteListMatcher 创建jwt白名单
@@ -31,7 +32,7 @@ func parseRSAPublicKeyFromPEM(pemBytes []byte) (*rsa.PublicKey, error) {
 }
 
 func InitJwtKey(ac *conf.Auth) *rsa.PublicKey {
-	publicKey, err := parseRSAPublicKeyFromPEM([]byte(ac.Jwt.ApiKey))
+	publicKey, err := parseRSAPublicKeyFromPEM([]byte(ac.Jwt.Certificate))
 	if err != nil {
 		panic("failed to parse public key")
 	}

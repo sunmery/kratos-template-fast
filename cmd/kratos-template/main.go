@@ -87,27 +87,27 @@ func main() {
 	// 认证和授权
 	var ac conf.Auth
 	if err := c.Scan(&ac); err != nil {
-		log.Fatal(fmt.Errorf("load config failed:%w", err))
+		log.Fatal(fmt.Errorf("load auth config failed:%w", err))
 	}
 
 	var bc conf.Bootstrap
 	if err := c.Scan(&bc); err != nil {
-		log.Fatal(fmt.Errorf("load config failed:%w", err))
+		log.Fatal(fmt.Errorf("load bootstrap config failed:%w", err))
 	}
 
 	// 注册中心和配置中心
 	var cc conf.Consul
 	if err := c.Scan(&cc); err != nil {
-		log.Fatal(fmt.Errorf("load config failed:%w", err))
+		log.Fatal(fmt.Errorf("load consul config failed:%w", err))
 	}
 
-	// 链路追踪
-	var tc conf.Trace
-	if err := c.Scan(&tc); err != nil {
-		log.Fatal(fmt.Errorf("load config failed:%w", err))
+	// 可观测性
+	var obs conf.Observability
+	if err := c.Scan(&obs); err != nil {
+		log.Fatal(fmt.Errorf("load observability config failed:%w", err))
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, &ac, &cc, &tc, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, &ac, &cc, &obs, logger)
 	if err != nil {
 		log.Fatal(fmt.Errorf("load config failed:%w", err))
 	}
@@ -115,6 +115,6 @@ func main() {
 
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {
-		log.Fatal(fmt.Errorf("load config failed:%w", err))
+		log.Fatal(fmt.Errorf("app run failed:%w", err))
 	}
 }

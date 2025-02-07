@@ -3,25 +3,25 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	jwtV5 "github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/handlers"
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.27.0"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server,
 
 	ac *conf.Auth,
-	tr *conf.Trace,
+	obs *conf.Observability,
 	logger log.Logger,
 ) *http.Server {
 	// InitSentry()
@@ -34,7 +34,7 @@ func NewHTTPServer(c *conf.Server,
 		resource.WithAttributes(
 			// The service name used to display traces in backends
 			// serviceName,
-			semconv.ServiceNameKey.String(tr.Jaeger.ServiceName),
+			semconv.ServiceNameKey.String(obs.Trace.ServiceName),
 			// attribute.String("exporter", "otlptracehttp"),
 			// attribute.String("environment", "dev"),
 			// attribute.Float64("float", 312.23),
@@ -44,8 +44,8 @@ func NewHTTPServer(c *conf.Server,
 		log.Fatal(err)
 	}
 
-	// shutdownTracerProvider, err := initTracerProvider(ctx, res, tr.Jaeger.Http.Endpoint)
-	_, err2 := initTracerProvider(ctx, res, tr.Jaeger.Http.Endpoint)
+	// shutdownTracerProvider, err := initTracerProvider(ctx, res, obs.Trace.Http.Endpoint)
+	_, err2 := initTracerProvider(ctx, res, obs.Trace.Http.Endpoint)
 	if err2 != nil {
 		log.Fatal(err)
 	}

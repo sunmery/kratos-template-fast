@@ -15,7 +15,7 @@ import (
 func NewGRPCServer(
 
 	c *conf.Server,
-	tr *conf.Trace,
+	obs *conf.Observability,
 	logger log.Logger,
 ) *grpc.Server {
 	// trace start
@@ -25,7 +25,7 @@ func NewGRPCServer(
 		resource.WithAttributes(
 			// The service name used to display traces in backends
 			// serviceName,
-			semconv.ServiceNameKey.String(tr.Jaeger.ServiceName),
+			semconv.ServiceNameKey.String(obs.Trace.ServiceName),
 			// attribute.String("exporter", "otlptracehttp"),
 			// attribute.String("environment", "dev"),
 			// attribute.Float64("float", 312.23),
@@ -36,7 +36,7 @@ func NewGRPCServer(
 	}
 
 	// shutdownTracerProvider, err := initTracerProvider(ctx, res, tr.Jaeger.Http.Endpoint)
-	_, err2 := initTracerProvider(ctx, res, tr.Jaeger.Http.Endpoint)
+	_, err2 := initTracerProvider(ctx, res, obs.Trace.Http.Endpoint)
 	if err2 != nil {
 		log.Fatal(err)
 	}
