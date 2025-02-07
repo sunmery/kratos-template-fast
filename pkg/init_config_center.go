@@ -30,12 +30,13 @@ func InitConsul(config ConfigCenter) config.Source {
 		config.Path = envConfigPath
 	}
 	if envConfigCenterToken := os.Getenv("config_center_token"); envConfigCenterToken != "" {
-		config.Path = envConfigCenterToken
+		config.Token = envConfigCenterToken
 	}
 
 	// debug
 	fmt.Printf("configPath:%v\n", config.Path)
 	fmt.Printf("configCenter:%v\n", config.Addr)
+	fmt.Printf("envConfigCenterToken:%v\n", config.Token)
 
 	consulClient, err := api.NewClient(&api.Config{
 		Address:  config.Addr,
