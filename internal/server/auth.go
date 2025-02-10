@@ -12,8 +12,8 @@ import (
 // NewWhiteListMatcher 创建jwt白名单
 func NewWhiteListMatcher() selector.MatchFunc {
 	whiteList := make(map[string]struct{})
+	// example: 从 api 目录生成的 pb.go 文件找到需要不需要进行鉴权的接口
 	// whiteList["/admin.v1.AdminService/Login"] = struct{}{}
-	whiteList["/api.user.v1.UserService/Signin"] = struct{}{}
 	return func(ctx context.Context, operation string) bool {
 		if _, ok := whiteList[operation]; ok {
 			return false
