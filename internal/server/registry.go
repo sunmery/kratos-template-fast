@@ -5,6 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/hashicorp/consul/api"
+	"github.com/sunmery/kratos-template/internal/conf"
 )
 
 // NewRegistrar 使用Consul作为注册中心
@@ -13,7 +14,7 @@ func NewRegistrar(c *conf.Consul) registry.Registrar {
 	configs := &api.Config{
 		Address: c.RegistryCenter.Address,
 		Scheme:  c.RegistryCenter.Scheme,
-		Token:   c.RegistryCenter.Token,
+		Token:   c.RegistryCenter.AclToken,
 	}
 	// 从conf/conf.proto定义Consul配置与configs/config.yml配置文件中读取consul的配置
 	// 创建consul客户端
