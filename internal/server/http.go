@@ -14,6 +14,7 @@ import (
 	jwtV5 "github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/handlers"
 	"github.com/sunmery/kratos-template/constants"
+	"github.com/sunmery/kratos-template/internal/conf"
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.27.0"
 )
