@@ -105,17 +105,6 @@ func NewHTTPServer(c *conf.Server,
 }
 
 func MultipartFormDataDecoder(r *http.Request, v interface{}) error {
-	// 兼容性: 请求的方法没有携带对应的Content-Type的情况
-	if r.Method == "POST" {
-		// 从Request Header的Content-Type中提取出对应的解码器
-		_, ok := http.CodecForRequest(r, "Content-Type")
-		// 如果找不到对应的解码器此时会报错
-		if !ok {
-			r.Header.Set("Content-Type", "application/json")
-			// return errors.BadRequest("CODEC", r.Header.Get("Content-Type"))
-		}
-	}
-
 	// example: 自定义解析
 	// fmt.Printf("method:%s\n", r.Method)
 	// if r.Method == "POST" {
@@ -127,6 +116,5 @@ func MultipartFormDataDecoder(r *http.Request, v interface{}) error {
 	// 		return errors.BadRequest("CODEC", err.Error())
 	// 	}
 	// }
-
 	return nil
 }
