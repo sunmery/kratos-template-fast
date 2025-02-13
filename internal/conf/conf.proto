@@ -43,11 +43,9 @@ message Data {
   Cache cache = 2;
 }
 
-// 授权/认证
-message Auth {
-  message JWT {
-    string certificate = 1 [json_name = "service_key"];
-  }
+// SaaS 软件即服务
+message SaaS {
+  // 用户管理平台
   message Casdoor {
     message Server {
       string endpoint = 1;
@@ -56,10 +54,18 @@ message Auth {
       string organization = 4;
       string application = 5;
     }
-    Server server = 2;
+    Server server = 1;
+  }
+
+  Casdoor casdoor = 1;
+}
+
+// 认证
+message Auth {
+  message JWT {
+    string certificate = 1 [json_name = "service_key"];
   }
   JWT jwt = 1;
-  Casdoor casdoor = 2;
 }
 
 // 可观测性
