@@ -27,6 +27,6 @@ func NewUserUsecase(repo UserRepo, logger log.Logger) *UserUsecase {
 }
 
 func (cc *UserUsecase) Signin(ctx context.Context, req *SigninRequest) (*SigninReply, error) {
-	cc.log.WithContext(ctx).Infof("Signin request: %+v", req)
+	cc.log.WithContext(ctx).Debugf("Signin request: %+v", req)
 	return cc.repo.Signin(ctx, req)
 }
