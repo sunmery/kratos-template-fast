@@ -16,7 +16,7 @@
 - consul配置中心
 - consul注册中心
 - jwt
-- minio
+- minio, 参考[kratos-minio](https://github.com/sunmery/kratos-minio)
 
 ## 数据库
 
