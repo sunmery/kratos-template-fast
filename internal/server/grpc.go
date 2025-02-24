@@ -2,8 +2,10 @@ package server
 
 import (
 	"context"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
@@ -16,7 +18,6 @@ import (
 
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(
-
 	c *conf.Server,
 	obs *conf.Observability,
 	logger log.Logger,
@@ -45,8 +46,9 @@ func NewGRPCServer(
 	}
 	// trace end
 
-	var opts = []grpc.ServerOption{
+	opts := []grpc.ServerOption{
 		grpc.Middleware(
+			metadata.Server(),    // 元信息
 			validate.Validator(), // 参数校验
 			recovery.Recovery(
 				recovery.WithHandler(func(ctx context.Context, req, err interface{}) error {

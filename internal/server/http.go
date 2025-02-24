@@ -2,17 +2,15 @@ package server
 
 import (
 	"context"
-	"fmt"
+
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
+
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
-	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	jwtV5 "github.com/golang-jwt/jwt/v5"
-	"github.com/gorilla/handlers"
 	"github.com/sunmery/kratos-template/constants"
 	"github.com/sunmery/kratos-template/internal/conf"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -20,15 +18,11 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server,
-
-	ac *conf.Auth,
+func NewHTTPServer(
+	c *conf.Server,
 	obs *conf.Observability,
 	logger log.Logger,
 ) *http.Server {
-	// InitSentry()
-	publicKey := InitJwtKey(ac)
-
 	// trace start
 	ctx := context.Background()
 
@@ -52,8 +46,9 @@ func NewHTTPServer(c *conf.Server,
 		log.Errorf("There was a problem initializing the tracer: %v", err)
 	}
 	// trace end
-	var opts = []http.ServerOption{
+	opts := []http.ServerOption{
 		http.Middleware(
+			metadata.Server(),    // 元信息
 			validate.Validator(), // 参数校验
 			tracing.Server(),
 			recovery.Recovery(
@@ -63,32 +58,7 @@ func NewHTTPServer(c *conf.Server,
 				}),
 			),
 			logging.Server(logger), // 在 http.ServerOption 中引入 logging.Server(), 则会在每次收到 HTTP 请求的时候打印详细请求信息
-			selector.Server(
-				jwt.Server(
-					func(token *jwtV5.Token) (interface{}, error) {
-						// 检查是否使用了正确的签名方法
-						if _, ok := token.Method.(*jwtV5.SigningMethodRSA); !ok {
-							return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-						}
-						return publicKey, nil
-					},
-					jwt.WithSigningMethod(jwtV5.SigningMethodRS256),
-				),
-			).
-				Match(NewWhiteListMatcher()).Build(),
 		),
-		// 浏览器跨域
-		http.Filter(handlers.CORS(
-			// 允许的端点列表:
-			handlers.AllowedOrigins([]string{"http://localhost:3000", "http://127.0.0.1:3000", "http://127.0.0.1:443", "https://node1.apikv.com"}),
-			// 允许请求的方法:
-			handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "PUT", "DELETE", "HEAD", "PATCH"}),
-			// 允许的 Headers:
-			handlers.AllowedHeaders([]string{"Authorization", "Content-Type"}),
-			// 允许跨域请求能够携带用户的凭据（例如 cookies 或 HTTP 认证信息）
-			handlers.AllowCredentials(),
-		)),
-		http.RequestDecoder(MultipartFormDataDecoder),
 	}
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
@@ -102,19 +72,4 @@ func NewHTTPServer(c *conf.Server,
 	srv := http.NewServer(opts...)
 	// v1.RegisterUserServiceHTTPServer(srv, user)
 	return srv
-}
-
-func MultipartFormDataDecoder(r *http.Request, v interface{}) error {
-	// example: 自定义解析
-	// fmt.Printf("method:%s\n", r.Method)
-	// if r.Method == "POST" {
-	// 	data, err := ioutil.ReadAll(r.Body)
-	// 	if err != nil {
-	// 		return errors.BadRequest("CODEC", err.Error())
-	// 	}
-	// 	if err = codec.Unmarshal(data, v); err != nil {
-	// 		return errors.BadRequest("CODEC", err.Error())
-	// 	}
-	// }
-	return nil
 }
