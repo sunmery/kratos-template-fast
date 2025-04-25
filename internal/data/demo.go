@@ -8,7 +8,7 @@ type exampleRepo struct {
 }
 
 func NewExampleRepo(data *Data, logger log.Logger) biz.ExampleRepo {
-	return &ExampleRepo{
+	return &exampleRepo{
 		data: data,
 		log:  log.NewHelper(logger),
 	}
